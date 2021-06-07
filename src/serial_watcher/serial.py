@@ -1,7 +1,7 @@
 import serial
 import threading
 
-class MySerial:
+class WatchSerial:
     def __init__(self, port, data_stack, control_data, baudrate=115200):
         self.__data_stack = data_stack
         self.__control_data = control_data
@@ -16,6 +16,9 @@ class MySerial:
 
         self.t = None
         self.thread_start()
+
+    def get_serial(self):
+        return self.__serial
 
     def thread_start(self):
         self.t = threading.Thread(target=self.read_data_thread)
