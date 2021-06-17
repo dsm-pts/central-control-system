@@ -45,6 +45,9 @@ class SerialWatcher:
             return self.serial_objs[serial].get_serial()
         return None
 
+    def get_watching_serials(self):
+        return self.serials
+
     def send(self, serial, data):
         serial_obj = self.get_serial(serial)
         if serial_obj is not None:
