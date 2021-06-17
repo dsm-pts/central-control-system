@@ -2,7 +2,12 @@ from serial_watcher import SerialWatcher
 from get_ser import serial_ports
 
 def watch(data, serial, serials, serial_objs):
-    print('rx', data)
+    print(serial, ': rx', data)
+
+def broadcast(watcher, data):
+    serials = watcher.get_watching_serials()
+    for serial in serials:
+        watcher.send(serial, data)
 
 def main():
     watcher = SerialWatcher(watch)
@@ -14,7 +19,7 @@ def main():
     watcher.watch_start()
     running = True
     
-    watcher.send(serials[0], bytes('\x02\x01\x01\x00\x1f\x03', 'ascii'))
+    broadcast(watcher, bytes('\x02\x01\x01\x00\x1f\x03', 'ascii'))
 
     while running:
         try:
