@@ -20,6 +20,10 @@ class WatchSerial:
     def get_serial(self):
         return self.__serial
 
+    def close(self):
+        self.thread_stop()
+        self.get_serial().close()
+
     def thread_start(self):
         self.t = threading.Thread(target=self.read_data_thread)
         self.t.daemon = True
@@ -32,9 +36,7 @@ class WatchSerial:
         self.t.join()
 
     def read_data_thread(self):
-        while True:
-            if self.__control_data['stop'] == True:
-                break
+        while not self.__control_data['stop']:
             if len(self.__data_stack) > 0:
                 continue
 
@@ -42,13 +44,10 @@ class WatchSerial:
 
             while self.__serial.read(1) != b'\x02':
                 pass
+                
             while True:
                 rxdata = self.__serial.read(1)
                 if rxdata == b'\x03':
                     break
                 self.__data_stack.append(rxdata)
             self.__control_data['wait'] = False
-
-    def send(self, data):
-        send_data = b'\x02' + bytes(data, 'ascii') + b'\x03'
-        self.__serial.write(send_data)

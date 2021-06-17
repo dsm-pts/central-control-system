@@ -1,21 +1,26 @@
-from serial_watcher.serial_watcher import SerialWatcher
+from serial_watcher import SerialWatcher
+from get_ser import serial_ports
 
 def watch(data, serial, serials, serial_objs):
-    # for other_serial in serials:
-    #     if other_serial != serial:
-    #         print('tx', data)
-    #         other_serial.send(data)
     print('rx', data)
 
 def main():
     watcher = SerialWatcher(watch)
-    watcher.broadcast('\x01\x01\x00\x1f')
 
+    serials = serial_ports()
+    for serial in serials:
+        watcher.watch(serial)
+
+    watcher.watch_start()
     running = True
+    
+    watcher.send(serials[0], bytes('\x02\x01\x01\x00\x1f\x03', 'ascii'))
+
     while running:
         try:
             pass
         except KeyboardInterrupt:
+            watcher.watch_stop()
             running = False
 
 if __name__ == '__main__':
