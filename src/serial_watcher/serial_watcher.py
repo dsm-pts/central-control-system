@@ -53,6 +53,10 @@ class SerialWatcher:
         if serial_obj is not None:
             serial_obj.write(data)
 
+    def broadcast(self, data):
+        for serial in self.serials:
+            self.send(serial, data)
+
     def serial_watch_thread(self):
         while self.watching:
             for serial in self.serials:
