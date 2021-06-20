@@ -1,36 +1,45 @@
 from serial_watcher import SerialWatcher
 from get_ser import serial_ports
+import protocol
 import constants
+import time
 
-def message_encoding(sender, command, data):
-    # Protocol
-    # Start(0x02) Sender(1 byte) Command(1 byte) Data_H8(1 byte) Data_L8(1 byte) End(0x03)
+sended_move_start_cmd = False
+bus_move_start_time = 0
+bus_speed = 0
+estimated_arrival_time = 0
 
-    data_h8 = (data & 0xFF00) >> 8
-    data_l8 = data & 0x00FF
+# (direction, distance)
+bus_route_index = 0
+bus_route = [(constants.DIR_F, 10), (constants.DIR_F, 10), (constants.DIR_N, 0)]
 
-    sender_byte = sender.to_bytes(1, 'big')
-    command_byte = command.to_bytes(1, 'big')
-    data_h8_byte = data_h8.to_bytes(1, 'big')
-    data_l8_byte = data_l8.to_bytes(1, 'big')
-
-    return b'\x02' + sender_byte + command_byte + data_h8_byte + data_l8_byte + b'\x03'
-
-def message_decoding(msg):
-    if len(msg) < 5:
-        print('invalid protocol')
-    sender = msg[1]
-    command = msg[2]
-
-    data_h8 = msg[3]
-    data_l8 = msg[4]
-
-    data = (data_h8 << 8) | data_l8
-
-    return (sender, command, data)
+# def serial_broadcast(serial_objs, data, broadcast):
+#     for serial_obj in serial_objs:
+#         serial_obj.write(data)
 
 def watch(data, serial, serials, serial_objs):
-    print(serial, ': rx', data)
+    sender, command, recv_data = protocol.message_decoding(data)
+
+    if sender == 0 && command == 0 && recv_data == 0:
+        print(serial, " : Invalid Protocol")
+        return
+
+    if sender == constants.TYPE_BUS:
+        if command == constants.CMD_OK && sended_move_start_cmd:
+            bus_move_start_time = time.time()
+            sended_move_start_cmd = False
+            broadcast(protocol.msg_move_direction(bus_route[bus_route_index][0]))
+        elif command == constants.CMD_MOVE_END:
+            arrival_time = int(time.time() - bus_move_start_time)
+            bus_speed = bus_route[bus_route_index][1] // arrival_time
+            estimated_arrival_time = int(bus_route[bus_route_index + 1][1] // bus_speed)
+            broadcast(protocol.msg_set_arrival_time(estimated_arrival_time))
+    elif sender == constants.TYPE_STM32:
+        if command == constants.CMD_OK:
+            pass
+        elif command == constants.CMD_NO:
+            broadcast(protocol.msg_set_arrival_time(estimated_arrival_time))
+            
 
 def main():
     watcher = SerialWatcher(watch)
@@ -42,7 +51,7 @@ def main():
     watcher.watch_start()
     running = True
 
-    watcher.broadcast(message_encoding(constants.TYPE_RPI, constants.CMD_SET_SECONDS, 31))
+    watcher.broadcast(protocol.msg_set_arrival_time(31))
 
     while running:
         try:

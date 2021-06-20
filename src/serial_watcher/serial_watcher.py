@@ -61,7 +61,7 @@ class SerialWatcher:
         while self.watching:
             for serial in self.serials:
                 if len(self.data_stacks[serial]) > 0 and not self.control_datas[serial]['wait']:
-                    self.watch_function(self.data_stacks[serial], serial, self.serials, self.serial_objs)
+                    self.watch_function(self.data_stacks[serial], serial, self.serials, self.serial_objs, self.broadcast)
 
                     while len(self.data_stacks[serial]) > 0:
                         self.data_stacks[serial].pop(0)
