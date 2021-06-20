@@ -1,0 +1,9 @@
+# Types
+TYPE_RPI = 0x01
+TYPE_STM32 = 0x02
+TYPE_RF = 0x03
+
+# Commands
+CMD_SET_SECONDS = 0x01
+CMD_RECV_RF = 0x02
+CMD_SEND_RF = 0x03
