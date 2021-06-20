@@ -8,7 +8,7 @@ CMD_OK = 0x01
 CMD_NO = 0x02
 
 # Commands - GLCD
-CMD_SET_SECONDS = 0x03
+CMD_SET_SECONDS = 0x13
 
 # Commands - RF
 CMD_RECV_RF = 0x04
