@@ -20,12 +20,12 @@ bus_route = [(constants.DIR_F, 10), (constants.DIR_F, 10), (constants.DIR_N, 0)]
 def watch(data, serial, serials, serial_objs):
     sender, command, recv_data = protocol.message_decoding(data)
 
-    if sender == 0 && command == 0 && recv_data == 0:
+    if sender == 0 and command == 0 and recv_data == 0:
         print(serial, " : Invalid Protocol")
         return
 
     if sender == constants.TYPE_BUS:
-        if command == constants.CMD_OK && sended_move_start_cmd:
+        if command == constants.CMD_OK and sended_move_start_cmd:
             bus_move_start_time = time.time()
             sended_move_start_cmd = False
             broadcast(protocol.msg_move_direction(bus_route[bus_route_index][0]))
