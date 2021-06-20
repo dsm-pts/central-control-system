@@ -1,7 +1,7 @@
 # Sender Types
 TYPE_RPI = 0x01
 TYPE_STM32 = 0x02
-TYPE_BUS = 0x03
+TYPE_BUS = 0x13
 
 # Commands - ACK
 CMD_OK = 0x01
