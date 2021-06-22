@@ -45,7 +45,6 @@ class WatchSerial:
             rx_data = 0
             while rx_data != b'\x02':
                 rx_data = self.__serial.read(1)
-                print(self.serial_port, ' rx : ', int.from_bytes(rx_data, 'big'))
 
             self.__data_stack.append(b'\x02')
             

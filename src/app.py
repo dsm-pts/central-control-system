@@ -21,6 +21,7 @@ def watch(data, serial, serials, serial_objs, broadcast):
     sender, command, recv_data = protocol.message_decoding(data)
 
     print(serial, ' rx-data : ', data)
+
     if sender == 0 and command == 0 and recv_data == 0:
         print(serial, " : Invalid Protocol")
         return
@@ -51,6 +52,8 @@ def main():
 
     watcher.watch_start()
     running = True
+
+    time.sleep(3)
 
     watcher.broadcast(protocol.msg_move_start())
     sended_move_start_cmd = True
