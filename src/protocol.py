@@ -3,7 +3,6 @@ import constants
 def message_encoding(sender, command, data):
     # Protocol
     # Start(0x02) Sender(1 byte) Command(1 byte) Data_H8(1 byte) Data_L8(1 byte) End(0x03)
-
     data_h8 = (data & 0xFF00) >> 8
     data_l8 = data & 0x00FF
 
@@ -20,8 +19,8 @@ def message_decoding(msg):
     sender = msg[1]
     command = msg[2]
 
-    data_h8 = msg[3]
-    data_l8 = msg[4]
+    data_h8 = int.from_bytes(msg[3], 'big')
+    data_l8 = int.from_bytes(msg[4], 'big')
 
     data = (data_h8 << 8) | data_l8
 

@@ -5,7 +5,7 @@ class WatchSerial:
     def __init__(self, port, data_stack, control_data, baudrate=115200):
         self.__data_stack = data_stack
         self.__control_data = control_data
-
+        self.serial_port = port
         self.__serial = serial.Serial(
             port,
             baudrate=baudrate,
@@ -42,12 +42,17 @@ class WatchSerial:
 
             self.__control_data['wait'] = True
 
-            while self.__serial.read(1) != b'\x02':
-                pass
-                
+            rx_data = 0
+            while rx_data != b'\x02':
+                rx_data = self.__serial.read(1)
+                print(self.serial_port, ' rx : ', int.from_bytes(rx_data, 'big'))
+
+            self.__data_stack.append(b'\x02')
+            
             while True:
                 rxdata = self.__serial.read(1)
                 if rxdata == b'\x03':
+                    self.__data_stack.append(b'\x03')
                     break
                 self.__data_stack.append(rxdata)
             self.__control_data['wait'] = False

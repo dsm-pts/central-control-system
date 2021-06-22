@@ -51,6 +51,7 @@ class SerialWatcher:
     def send(self, serial, data):
         serial_obj = self.get_serial(serial)
         if serial_obj is not None:
+            print('send(', data, ') to ', serial)
             serial_obj.write(data)
 
     def broadcast(self, data):

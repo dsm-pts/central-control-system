@@ -17,9 +17,10 @@ bus_route = [(constants.DIR_F, 10), (constants.DIR_F, 10), (constants.DIR_N, 0)]
 #     for serial_obj in serial_objs:
 #         serial_obj.write(data)
 
-def watch(data, serial, serials, serial_objs):
+def watch(data, serial, serials, serial_objs, broadcast):
     sender, command, recv_data = protocol.message_decoding(data)
 
+    print(serial, ' rx-data : ', data)
     if sender == 0 and command == 0 and recv_data == 0:
         print(serial, " : Invalid Protocol")
         return
@@ -51,7 +52,8 @@ def main():
     watcher.watch_start()
     running = True
 
-    watcher.broadcast(protocol.msg_set_arrival_time(31))
+    watcher.broadcast(protocol.msg_move_start())
+    sended_move_start_cmd = True
 
     while running:
         try:
